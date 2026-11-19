@@ -1,0 +1,264 @@
+{
+  "format_version": 1,
+  "version": "1.1.1",
+  "id": "npm-packages",
+  "name": "npm Packages",
+  "description": "Published package versions and npm pages for your projects.",
+  "shortcut": "N",
+  "detect": {
+    "files": [
+      "package.json"
+    ]
+  },
+  "metadata": {
+    "file": "package.json",
+    "fetch": "https://registry.npmjs.org/${file.name}/latest",
+    "fetch_when": [
+      {
+        "path": "file.name",
+        "op": "present"
+      },
+      {
+        "path": "file.private",
+        "op": "ne",
+        "value": "true"
+      },
+      {
+        "path": "file.publishConfig.registry",
+        "op": "in",
+        "values": [
+          "",
+          "https://registry.npmjs.org",
+          "https://registry.npmjs.org/",
+          "http://registry.npmjs.org",
+          "http://registry.npmjs.org/"
+        ]
+      }
+    ],
+    "hidden_when": [
+      {
+        "path": "file.name",
+        "op": "empty"
+      }
+    ],
+    "title": "NPM",
+    "name": "${file.name}",
+    "summary": "local ${file.version} · npm ${remote.version} · ${status}",
+    "status": "Published",
+    "statuses": [
+      {
+        "when": [
+          {
+            "path": "file.private",
+            "op": "eq",
+            "value": "true"
+          }
+        ],
+        "text": "Private package"
+      },
+      {
+        "when": [
+          {
+            "path": "file.publishConfig.registry",
+            "op": "present"
+          },
+          {
+            "path": "file.publishConfig.registry",
+            "op": "ne",
+            "value": "https://registry.npmjs.org"
+          },
+          {
+            "path": "file.publishConfig.registry",
+            "op": "ne",
+            "value": "https://registry.npmjs.org/"
+          },
+          {
+            "path": "file.publishConfig.registry",
+            "op": "ne",
+            "value": "http://registry.npmjs.org"
+          },
+          {
+            "path": "file.publishConfig.registry",
+            "op": "ne",
+            "value": "http://registry.npmjs.org/"
+          }
+        ],
+        "text": "Custom registry"
+      },
+      {
+        "when": [
+          {
+            "path": "request.error",
+            "op": "present"
+          }
+        ],
+        "text": "Registry unavailable: ${request.error}"
+      },
+      {
+        "when": [
+          {
+            "path": "request.status",
+            "op": "eq",
+            "value": "404"
+          }
+        ],
+        "text": "Not published publicly"
+      },
+      {
+        "when": [
+          {
+            "path": "remote.name",
+            "op": "ne",
+            "value": "${file.name}"
+          }
+        ],
+        "text": "Unexpected registry response"
+      },
+      {
+        "when": [
+          {
+            "path": "remote.version",
+            "op": "empty"
+          }
+        ],
+        "text": "No latest release"
+      },
+      {
+        "when": [
+          {
+            "path": "remote.deprecated",
+            "op": "present"
+          }
+        ],
+        "text": "Deprecated"
+      },
+      {
+        "when": [
+          {
+            "path": "file.version",
+            "op": "eq",
+            "value": "${remote.version}"
+          }
+        ],
+        "text": "Matches latest"
+      },
+      {
+        "when": [
+          {
+            "path": "file.version",
+            "op": "ne",
+            "value": "${remote.version}"
+          }
+        ],
+        "text": "Local version differs from latest"
+      }
+    ],
+    "url": "https://www.npmjs.com/package/${file.name|path}",
+    "url_when": [
+      {
+        "path": "request.status",
+        "op": "eq",
+        "value": "200"
+      },
+      {
+        "path": "request.error",
+        "op": "empty"
+      },
+      {
+        "path": "remote.name",
+        "op": "eq",
+        "value": "${file.name}"
+      },
+      {
+        "path": "remote.version",
+        "op": "present"
+      }
+    ],
+    "fields": [
+      {
+        "label": "Local",
+        "value": "${file.version}"
+      },
+      {
+        "label": "Latest",
+        "value": "${remote.version}"
+      },
+      {
+        "label": "License",
+        "value": "${remote.license}"
+      },
+      {
+        "label": "Deprecated",
+        "value": "${remote.deprecated}"
+      }
+    ],
+    "visible_when": [
+      {
+        "path": "file.name",
+        "op": "present"
+      },
+      {
+        "path": "file.private",
+        "op": "ne",
+        "value": "true"
+      },
+      {
+        "path": "file.publishConfig.registry",
+        "op": "in",
+        "values": [
+          "",
+          "https://registry.npmjs.org",
+          "https://registry.npmjs.org/",
+          "http://registry.npmjs.org",
+          "http://registry.npmjs.org/"
+        ]
+      },
+      {
+        "path": "request.status",
+        "op": "eq",
+        "value": "200"
+      },
+      {
+        "path": "request.error",
+        "op": "empty"
+      },
+      {
+        "path": "remote.name",
+        "op": "eq",
+        "value": "${file.name}"
+      },
+      {
+        "path": "remote.version",
+        "op": "present"
+      }
+    ],
+    "filter_setting": "published-only"
+  },
+  "actions": [
+    {
+      "id": "open",
+      "name": "Open npm",
+      "kind": "metadata-url"
+    }
+  ],
+  "pages": [
+    {
+      "id": "packages",
+      "name": "npm Packages",
+      "title": "NPM PACKAGES",
+      "text": "Your published npm packages. Select a row and press N to open it. Ctrl+R refreshes package information.",
+      "actions": [
+        "open"
+      ]
+    }
+  ],
+  "settings": [
+    {
+      "id": "published-only",
+      "name": "Only show published packages",
+      "type": "bool",
+      "default": true
+    }
+  ],
+  "update_url": "https://raw.githubusercontent.com/FatalMistake02/rian_npm/main/npm.json"
+}
